@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rankings de Torneos Internacionales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+        .stagger-6 { animation-delay: 0.3s; }
+        .stagger-7 { animation-delay: 0.35s; }
+        .stagger-8 { animation-delay: 0.4s; }
+        .stagger-9 { animation-delay: 0.45s; }
+        
+        tbody tr {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                🏆 Rankings de Torneos 🏆
+            </h1>
+            <p class="text-xl text-gray-600 font-semibold">Campeonatos Internacionales</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-4 mb-6 justify-center flex-wrap">
+            <button onclick="changeTab('general')" id="tab-general"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-blue-600 text-white shadow-lg">
+                General
+            </button>
+            <button onclick="changeTab('mundial')" id="tab-mundial"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Mundial
+            </button>
+            <button onclick="changeTab('mundial-ext')" id="tab-mundial-ext"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Mundial Ext.
+            </button>
+            <button onclick="changeTab('eurocopa')" id="tab-eurocopa"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Eurocopa
+            </button>
+            <button onclick="changeTab('africa')" id="tab-africa"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Copa África
+            </button>
+            <button onclick="changeTab('norteamerica')" id="tab-norteamerica"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Copa Norteamericana
+            </button>
+            <button onclick="changeTab('sudamerica')" id="tab-sudamerica"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Copa Sudamericana
+            </button>
+            <button onclick="changeTab('oceania')" id="tab-oceania"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Copa Oceanía
+            </button>
+            <button onclick="changeTab('asia')" id="tab-asia"
+                    class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+                Copa Asia
+            </button>
+        </div>
+
+        <!-- Content Sections -->
+        <div id="content-container"></div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE DATOS
+        const tournamentsData = {
+            general: {
+                title: "🏆 Ranking General",
+                editions: [] // Se calculará dinámicamente
+            },
+            mundial: {
+                title: "Mundial",
+                editions: [
+                    [1, "Guatemala", "Micronesia", "San Cristobal"],
+                    [2, "Arabia Saudi", "Venezuela", "Moldavia"],
+                    [3, "Chad", "Hungria", "Islandia"],
+                    [4, "Mauritania", "Kosovo", "Yemen"],
+                    [5, "Reino Unido", "EAU", "Samoa"],
+                    [6, "RD Congo", "Mexico", "Malta"],
+                    [7, "Corea del Norte", "Kuwait", "Bangladesh"]
+                ]
+            },
+            "mundial-ext": {
+                title: "Mundial Extendido",
+                editions: [
+                    [1, "Yibuti", "Grecia", "Venezuela"]
+                ]
+            },
+            eurocopa: {
+                title: "Eurocopa",
+                editions: [
+                    [1, "Chequia", "Andorra", "Malta"],
+                    [2, "Monaco", "Eslovenia", "Liechtenstein"],
+                    [3, "Liechtenstein", "Albania", "Italia"],
+                    [4, "Dinamarca", "Portugal", "Paises Bajos"],
+                    [5, "Lituania", "Bielorrusia", "Eslovenia"],
+                    [6, "Grecia", "Letonia", "Italia"],
+                    [7, "Croacia", "Paises Bajos", "Montenegro"],
+                    [8, "Francia", "Noruega", "Alemania"]
+                ]
+            },
+            africa: {
+                title: "Copa África",
+                editions: [
+                    [1, "Nigeria", "Argelia", "Yibuti"]
+                ]
+            },
+            norteamerica: {
+                title: "Copa Norteamericana",
+                editions: [
+                    [1, "Canada", "San Vicente", "Trinidad"]
+                ]
+            },
+            sudamerica: {
+                title: "Copa Sudamericana",
+                editions: [
+                    [1, "Peru", "Surinam", "Bolivia"]
+                ]
+            },
+            oceania: {
+                title: "Copa Oceanía",
+                editions: [
+                    [1, "Fiyi", "Islas Salomon", "Nueva Zelanda"],
+                    [2, "Samoa", "Fiyi", "Kiribati"],
+                    [3, "Samoa", "Tonga", "Nueva Zelanda"]
+                ]
+            },
+            asia: {
+                title: "Copa Asia",
+                editions: [
+                    [1, "Camboya", "Kirguistan", "Maldivas"]
+                ]
+            }
+        };
+
+        let currentTab = 'general';
+
+        function changeTab(tab) {
+            currentTab = tab;
+            
+            ['general', 'mundial', 'mundial-ext', 'eurocopa', 'africa', 'norteamerica', 'sudamerica', 'oceania', 'asia'].forEach(t => {
+                const tabBtn = document.getElementById('tab-' + t);
+                
+                if (t === tab) {
+                    tabBtn.className = 'flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-blue-600 text-white shadow-lg';
+                } else {
+                    tabBtn.className = 'flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100';
+                }
+            });
+            
+            renderContent();
+        }
+
+        function calculateRankings(editions) {
+            const rankings = {};
+            
+            editions.forEach(([year, first, second, third]) => {
+                [first, second, third].forEach((country, idx) => {
+                    if (!rankings[country]) {
+                        rankings[country] = { first: 0, second: 0, third: 0, total: 0 };
+                    }
+                    if (idx === 0) rankings[country].first++;
+                    else if (idx === 1) rankings[country].second++;
+                    else if (idx === 2) rankings[country].third++;
+                    rankings[country].total++;
+                });
+            });
+
+            return Object.entries(rankings)
+                .map(([country, stats]) => ({ country, ...stats }))
+                .sort((a, b) => {
+                    if (b.first !== a.first) return b.first - a.first;
+                    if (b.second !== a.second) return b.second - a.second;
+                    if (b.third !== a.third) return b.third - a.third;
+                    return a.country.localeCompare(b.country, 'es');
+                });
+        }
+
+        function getRankColor(rank) {
+            if (rank === 1) return 'bg-gradient-to-r from-yellow-200 to-yellow-300';
+            if (rank === 2) return 'bg-gradient-to-r from-gray-200 to-gray-300';
+            if (rank === 3) return 'bg-gradient-to-r from-orange-200 to-orange-300';
+            return 'bg-white hover:bg-blue-50';
+        }
+
+        function createRankingTable(rankings) {
+            let html = `
+                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            📊 Ranking General
+                        </h2>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-blue-100">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-bold text-blue-900">Posición</th>
+                                    <th class="px-6 py-4 text-left font-bold text-blue-900">País</th>
+                                    <th class="px-6 py-4 text-center font-bold text-blue-900">🥇</th>
+                                    <th class="px-6 py-4 text-center font-bold text-blue-900">🥈</th>
+                                    <th class="px-6 py-4 text-center font-bold text-blue-900">🥉</th>
+                                    <th class="px-6 py-4 text-center font-bold text-blue-900">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            rankings.forEach((item, idx) => {
+                html += `
+                    <tr class="${getRankColor(idx + 1)} transition-colors border-b border-gray-200 animate-fade-in-up stagger-${Math.min(idx + 1, 9)}">
+                        <td class="px-6 py-4 font-bold text-gray-800">${idx + 1}</td>
+                        <td class="px-6 py-4 font-semibold text-gray-800">${item.country}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="text-yellow-600 font-bold text-xl">${item.first}</span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="text-gray-600 font-bold text-xl">${item.second}</span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="text-orange-600 font-bold text-xl">${item.third}</span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="inline-block bg-blue-600 text-white px-3 py-1 rounded-full font-bold">${item.total}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function createHistoryTable(editions) {
+            let html = `
+                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-6">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            📜 Historial Top 3
+                        </h2>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-green-100">
+                                <tr>
+                                    <th class="px-6 py-4 text-center font-bold text-green-900">Edición</th>
+                                    <th class="px-6 py-4 text-left font-bold text-green-900">🥇 Campeón</th>
+                                    <th class="px-6 py-4 text-left font-bold text-green-900">🥈 Subcampeón</th>
+                                    <th class="px-6 py-4 text-left font-bold text-green-900">🥉 Tercer Lugar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            editions.slice().reverse().forEach(([year, first, second, third], idx) => {
+                html += `
+                    <tr class="bg-white hover:bg-green-50 transition-colors border-b border-gray-200 animate-fade-in-up stagger-${Math.min(idx + 1, 9)}">
+                        <td class="px-6 py-4 text-center">
+                            <span class="inline-block bg-green-600 text-white px-4 py-2 rounded-lg font-bold">${year}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-yellow-600 text-lg">${first}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-gray-600 text-lg">${second}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-orange-600 text-lg">${third}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function renderContent() {
+            const container = document.getElementById('content-container');
+            
+            if (currentTab === 'general') {
+                // Calcular ranking general sumando todas las ediciones de todos los torneos
+                const allEditions = [];
+                Object.keys(tournamentsData).forEach(key => {
+                    if (key !== 'general') {
+                        allEditions.push(...tournamentsData[key].editions);
+                    }
+                });
+                
+                const generalRankings = calculateRankings(allEditions);
+                
+                container.innerHTML = `
+                    <div class="animate-fade-in">
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold text-gray-800">🏆 Ranking General (Todos los Torneos)</h2>
+                            <p class="text-gray-600 mt-2">Suma de todos los campeonatos</p>
+                        </div>
+                        
+                        <div class="max-w-4xl mx-auto">
+                            ${createRankingTable(generalRankings)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                const tournament = tournamentsData[currentTab];
+                const rankings = calculateRankings(tournament.editions);
+                
+                container.innerHTML = `
+                    <div class="animate-fade-in">
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold text-gray-800">${tournament.title}</h2>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>${createRankingTable(rankings)}</div>
+                            <div>${createHistoryTable(tournament.editions)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Re-trigger animations
+            setTimeout(() => {
+                const rows = container.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    row.style.opacity = '0';
+                });
+                setTimeout(() => {
+                    rows.forEach(row => {
+                        row.style.opacity = '';
+                    });
+                }, 10);
+            }, 10);
+        }
+
+        // Initialize
+        renderContent();
+    </script>
+</body>
+</html>
